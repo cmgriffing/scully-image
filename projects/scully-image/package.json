@@ -1,0 +1,39 @@
+{
+  "name": "scully-image",
+  "version": "0.0.1",
+  "dependencies": {
+    "sharp": "^0.25.2",
+    "potrace": "2.1.5",
+    "sqip": "^1.0.0-alpha.31",
+    "sqip-plugin-blur": "^1.0.0-alpha.22",
+    "sqip-plugin-data-uri": "^1.0.0-alpha.32",
+    "sqip-plugin-primitive": "^1.0.0-alpha.33",
+    "sqip-plugin-svgo": "^1.0.0-alpha.32"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "sharp": "^0.25.2",
+    "potrace": "2.1.5",
+    "sqip": "^1.0.0-alpha.31",
+    "sqip-plugin-blur": "^1.0.0-alpha.22",
+    "sqip-plugin-data-uri": "^1.0.0-alpha.32",
+    "sqip-plugin-primitive": "^1.0.0-alpha.33",
+    "sqip-plugin-svgo": "^1.0.0-alpha.32"
+  },
+  "peerDependencies": {
+    "sharp": "^0.25.2",
+    "potrace": "2.1.5",
+    "jsdom": "latest",
+    "@angular/common": "^9.0.1",
+    "@angular/core": "^9.0.1",
+    "@scullyio/scully": "latest",
+    "@scullyio/ng-lib": "latest",
+    "tslib": "^1.10.0",
+    "sqip": "^1.0.0-alpha.31",
+    "sqip-plugin-blur": "^1.0.0-alpha.22",
+    "sqip-plugin-data-uri": "^1.0.0-alpha.32",
+    "sqip-plugin-primitive": "^1.0.0-alpha.33",
+    "sqip-plugin-svgo": "^1.0.0-alpha.32",
+    "esm": "^3.2.25"
+  }
+}
