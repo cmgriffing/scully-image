@@ -18,6 +18,52 @@ enum PreloaderTypes {
   sqip = 'sqip',
 }
 
+interface blurOptions {
+  width: number;
+}
+
+interface sqipOptions {
+  numberOfPrimitives?: number;
+  mode?: sqipModes;
+  rep?: number;
+  alpha?: number;
+  cores?: number;
+  background?: string;
+}
+
+enum sqipModes {
+  combo = 0,
+  triangle = 1,
+  rect = 2,
+  ellipse = 3,
+  circle = 4,
+  rotatedrect = 5,
+  beziers = 6,
+  rotatedellipse = 7,
+  polygon = 8,
+}
+
+interface tracedOptions {
+  turnPolicy?: tracedTurnPolicies;
+  turdSize?: number;
+  alphaMax?: number;
+  optCurve?: boolean;
+  optTolerance?: number;
+  threshold?: number;
+  blackOnWhite?: boolean;
+  color?: string;
+  background?: string;
+}
+
+enum tracedTurnPolicies {
+  TURNPOLICY_BLACK = 'black',
+  TURNPOLICY_WHITE = 'white',
+  TURNPOLICY_LEFT = 'left',
+  TURNPOLICY_RIGHT = 'right',
+  TURNPOLICY_MINORITY = 'minority',
+  TURNPOLICY_MAJORITY = 'majority',
+}
+
 const SCULLY_IMAGE_URL_MAP = 'scullyImageUrlMap';
 
 const template = `
@@ -123,7 +169,7 @@ export class ScullyImageComponent {
   fullHeight = false;
 
   @Input()
-  pluginOptions: any = {};
+  pluginOptions: blurOptions | sqipOptions | tracedOptions = {};
 
   @Input()
   preloader = PreloaderTypes.blur;
@@ -167,8 +213,6 @@ export class ScullyImageComponent {
   ) {}
 
   baseInit(): void {
-    console.log(window['scullyImageUrlMap']);
-
     if (isScullyGenerated()) {
       console.log('scully is generated');
 
@@ -186,8 +230,11 @@ export class ScullyImageComponent {
         .subscribe((scullyImageUrlMap) => {
           console.log('scullyImageUrlMap', { scullyImageUrlMap });
           this.scullyImageUrlMap = scullyImageUrlMap;
+          console.log('pluginOptions', this.pluginOptions);
           this.preloadedSrc =
-            scullyImageUrlMap[this.src + this.preloader][this.preloader];
+            scullyImageUrlMap[
+              this.src + this.preloader + JSON.stringify(this.pluginOptions)
+            ];
           if (this.preloader === PreloaderTypes.sqip) {
             this.preloadedSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
               this.preloadedSrc
@@ -197,7 +244,7 @@ export class ScullyImageComponent {
               'data:image/svg+xml;utf8,' + this.preloadedSrc
             );
           }
-          this.loadedSrc = scullyImageUrlMap[this.src + this.preloader]['src'];
+          this.loadedSrc = this.src;
         });
     } else {
       this.transferState.setState(SCULLY_IMAGE_URL_MAP, {});
@@ -242,6 +289,11 @@ export class ScullyBlurImageComponent extends ScullyImageComponent
     return this.preloader;
   }
 
+  @HostBinding('attr.data-plugin-options')
+  get pluginOptionsAsString() {
+    return JSON.stringify(this.pluginOptions);
+  }
+
   ngOnInit(): void {
     this.baseInit();
   }
@@ -270,6 +322,11 @@ export class ScullyTracedImageComponent extends ScullyImageComponent
   @HostBinding('attr.data-type')
   get type() {
     return this.preloader;
+  }
+
+  @HostBinding('attr.data-plugin-options')
+  get pluginOptionsAsString() {
+    return JSON.stringify(this.pluginOptions);
   }
 
   ngOnInit(): void {

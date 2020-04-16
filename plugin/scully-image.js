@@ -12,7 +12,6 @@ const scullyTransferStateEndString = "/** ___SCULLY_STATE_END___ */";
 
 module.exports = {
   scullyImageSharpPlugin: async (html, route) => {
-    console.log("TESTING THE LOGGING");
     const dom = new JSDOM(html);
     const doc = dom.window.document;
 
@@ -57,11 +56,6 @@ module.exports = {
 
     const scullyImageUrlMap = {};
 
-    const sqip = require("sqip").default;
-
-    const { trace } = require("potrace");
-    const potrace = promisify(trace);
-
     await Promise.all(
       Array.from(imgElements).map(async (img) => {
         // TODO: get child img element from lib-scully-image element
@@ -69,63 +63,38 @@ module.exports = {
         const preloaderType = img.getAttribute("data-type");
         console.log({ preloaderType });
         const src = img.getAttribute("src");
+        const pluginOptionsString = img.getAttribute("data-plugin-options");
+        const pluginOptions = JSON.parse(pluginOptionsString);
 
-        if (!scullyImageUrlMap[src + preloaderType]) {
+        const scullyImageMapKey = src + preloaderType + pluginOptionsString;
+
+        if (!scullyImageUrlMap[scullyImageMapKey]) {
           const promise = new Promise(async (resolve, reject) => {
             console.log("img", img.style.height);
             const imageBody = await getUrl(src);
             console.log({ imageBody });
-            const resizedBuffer = await sharp(imageBody)
-              .resize({ width: 42 })
-              .png()
-              .toBuffer();
 
-            console.log("before base64: ");
-            const base64 = await bufferToDataUri(resizedBuffer, "png");
-            fs.writeFileSync("./scratch.png", imageBody);
-            console.log("before sqip: ");
-            const sqipBuffer = await sqip({
-              input: "./scratch.png",
-              plugins: [
-                {
-                  name: "primitive",
-                  options: { numberOfPrimitives: 8, mode: 0 },
-                },
-                "svgo",
-                "data-uri",
-              ],
-            }).catch((e) => {
-              console.log("sqip error", e);
-            });
-            console.log("sqip", sqipBuffer);
-            const tracedSVG = await potrace(imageBody);
+            const processedImage = await processImageIntoPreloader(
+              imageBody,
+              preloaderType,
+              pluginOptions
+            );
+
             // TODO: The key needs to take size into account for specificity
             try {
-              scullyImageUrlMap[src + preloaderType] = {
-                src,
-                base64,
-                tracedSVG,
-                sqip: sqipBuffer.metadata.dataURIBase64,
-              };
-              img.setAttribute(
-                "src",
-                scullyImageUrlMap[src + preloaderType][preloaderType]
-              );
+              scullyImageUrlMap[scullyImageMapKey] = processedImage;
+              img.setAttribute("src", scullyImageUrlMap[scullyImageMapKey]);
 
               const preloaderElement = img.querySelector(".preloaded-image");
               if (preloaderType === "base64") {
-                preloaderElement.setAttribute("src", base64);
+                preloaderElement.setAttribute("src", processedImage);
               } else if (preloaderType === "tracedSVG") {
                 preloaderElement.setAttribute(
                   "src",
-                  "data:image/svg+xml;utf8," +
-                    scullyImageUrlMap[src + preloaderType][preloaderType]
+                  "data:image/svg+xml;utf8," + processedImage
                 );
               } else if (preloaderType === "sqip") {
-                preloaderElement.setAttribute(
-                  "src",
-                  scullyImageUrlMap[src + preloaderType][preloaderType]
-                );
+                preloaderElement.setAttribute("src", processedImage);
               }
 
               transferState.scullyImageUrlMap = scullyImageUrlMap;
@@ -137,28 +106,23 @@ module.exports = {
               transferStateElement.innerHTML = newTransferStateString;
 
               doc.body.appendChild(transferStateElement);
-              resolve(scullyImageUrlMap[src + preloaderType]);
+              resolve(scullyImageUrlMap[scullyImageMapKey]);
             } catch (lastError) {
               console.log({ lastError });
               reject(lastError);
             }
           });
-          scullyImageUrlMap[src + preloaderType] = promise;
+          scullyImageUrlMap[scullyImageMapKey] = promise;
           return await promise;
         } else {
           console.log("Image already parsed");
-          const imageData = await scullyImageUrlMap[src + preloaderType];
-          // if (!imageData.base64) {
-          //   imageData = await imageData;
-          // }
-          img.setAttribute("src", imageData[preloaderType]);
+          const imageData = await scullyImageUrlMap[scullyImageMapKey];
+          img.setAttribute("src", imageData);
         }
       })
     );
 
     const serializedDom = dom.serialize();
-
-    // console.log({ serializedDom });
 
     return serializedDom;
   },
@@ -183,6 +147,49 @@ function getUrl(url) {
 async function bufferToDataUri(buffer, format) {
   var string = await buffer.toString("base64");
   return `data:image/${format};base64,${string}`;
+}
+
+async function processImageIntoPreloader(
+  imageBody,
+  preloaderType,
+  pluginOptions
+) {
+  if (preloaderType === "base64") {
+    const resizedBuffer = await sharp(imageBody)
+      .resize({ width: 42 })
+      .png()
+      .toBuffer();
+
+    console.log("before base64: ");
+    return bufferToDataUri(resizedBuffer, "png");
+  } else if (preloaderType === "sqip") {
+    const sqip = require("sqip").default;
+    fs.writeFileSync("./scratch.png", imageBody);
+    console.log("before sqip: ");
+    const result = await sqip({
+      input: "./scratch.png",
+      plugins: [
+        {
+          name: "primitive",
+          options: {
+            numberOfPrimitives: 20,
+            mode: 0,
+            ...pluginOptions,
+          },
+        },
+        "svgo",
+        "data-uri",
+      ],
+    });
+    return result.metadata.dataURIBase64;
+  } else if (preloaderType === "tracedSVG") {
+    console.log("before sqip: ");
+    const { trace } = require("potrace");
+    const potrace = promisify(trace);
+    return potrace(imageBody, pluginOptions);
+  } else {
+    throw new Error(`Unsupported preloader type: ${preloaderType}`);
+  }
 }
 
 function extractTransferStateFromString(transferStateString) {
