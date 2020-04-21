@@ -1,10 +1,50 @@
 "use strict";
 
 const { JSDOM } = require("jsdom");
-const sharp = require("sharp");
 const { promisify } = require("util");
 const fs = require("fs");
 const https = require("https");
+const path = require("path");
+
+const UUID_NAMESPACE = "363f57fa-aa19-425d-9be4-204658e11a5f";
+
+const svgoOptions = {
+  multipass: true,
+  floatPrecision: 0,
+  plugins: [
+    {
+      removeViewBox: false,
+    },
+    {
+      addAttributesToSVGElement: {
+        attributes: [
+          {
+            preserveAspectRatio: `none`,
+          },
+        ],
+      },
+    },
+  ],
+};
+
+let scullyImageConfig = {
+  assetsPath: "./assets",
+  defaultPreloaderOptions: {
+    base64: {},
+    tracedSVG: {},
+    sqip: {},
+  },
+};
+try {
+  const scullyImageConfigPath = path.resolve(
+    process.cwd(),
+    "scully-image.config.json"
+  );
+  // TODO: Do a proper defaults override instead of naive replacement
+  scullyImageConfig = require(scullyImageConfigPath);
+} catch (e) {
+  console.log("No Scully Image config found. Using defaults.");
+}
 
 const scullyTransferStateStartString = "/** ___SCULLY_STATE_START___ */";
 
@@ -29,14 +69,14 @@ module.exports = {
 
     const transferStateString = transferStateElement.innerHTML;
 
-    if (transferStateString === "") {
+    if (!transferStateString || transferStateString === "") {
       console.log(
         "bailing out of scully image since we have no transferstate",
         transferStateString
       );
       doc.body.appendChild(transferStateElement);
       // If transferState is empty we quit out.
-      return dom.serialize();
+      return html;
     }
 
     const {
@@ -51,13 +91,18 @@ module.exports = {
       );
       // If transferState is empty we quit out.
       doc.body.appendChild(transferStateElement);
-      return dom.serialize();
+      return html;
     }
+    console.log("imageUrlMap", transferState.scullyImageUrlMap);
 
     const scullyImageUrlMap = {};
 
     await Promise.all(
       Array.from(imgElements).map(async (img) => {
+        const uuidv5 = require("uuid").v5;
+        const imagemin = require("imagemin");
+        const imageminPngquant = require("imagemin-pngquant");
+        const sharp = require("sharp");
         // TODO: get child img element from lib-scully-image element
         console.log({ img });
         const preloaderType = img.getAttribute("data-type");
@@ -66,33 +111,134 @@ module.exports = {
         const pluginOptionsString = img.getAttribute("data-plugin-options");
         const pluginOptions = JSON.parse(pluginOptionsString);
 
-        const scullyImageMapKey = src + preloaderType + pluginOptionsString;
+        const pixelHeight = +img.getAttribute("ng-reflect-pixel-height");
+        const pixelWidth = +img.getAttribute("ng-reflect-pixel-width");
 
-        if (!scullyImageUrlMap[scullyImageMapKey]) {
+        const fluidMaxWidth = +img.getAttribute("ng-reflect-fluid-max-width");
+        const fluidMaxHeight = +img.getAttribute("ng-reflect-fluid-max-height");
+
+        console.log("height and width values: ", {
+          pixelHeight,
+          pixelWidth,
+          fluidMaxHeight,
+          fluidMaxWidth,
+        });
+        const scullyPreloaderImageMapKey =
+          src +
+          preloaderType +
+          pluginOptionsString +
+          pixelHeight +
+          pixelWidth +
+          fluidMaxHeight +
+          fluidMaxWidth;
+
+        const scullyFullImageMapKey =
+          src +
+          "full" +
+          pluginOptionsString +
+          pixelHeight +
+          pixelWidth +
+          fluidMaxHeight +
+          fluidMaxWidth;
+
+        let imageBody;
+
+        if (!scullyImageUrlMap[scullyFullImageMapKey]) {
+          imageBody = imageBody || (await getImageData(src));
+
+          const options = {};
+          if (pixelHeight > 0) {
+            options.height = pixelHeight;
+          }
+          if (pixelWidth > 0) {
+            options.width = pixelWidth;
+          }
+          if (fluidMaxHeight > 0) {
+            options.height = fluidMaxHeight;
+          }
+          if (fluidMaxWidth > 0) {
+            options.width = fluidMaxWidth;
+          }
+
+          if (Object.keys(options).length > 0) {
+            const resizedBuffer = await sharp(imageBody)
+              .resize(options)
+              .png()
+              .toBuffer();
+
+            const outputFolderPath = path.resolve(
+              `./dist/static/`,
+              scullyImageConfig.assetsPath,
+              "scully-image"
+            );
+
+            try {
+              if (!fs.existsSync(outputFolderPath)) {
+                fs.mkdirSync(outputFolderPath);
+              }
+            } catch (err) {
+              console.error("error making scully image output folder", err);
+            }
+
+            const filenameUUID = uuidv5(scullyFullImageMapKey, UUID_NAMESPACE);
+
+            const filePath = path.relative(
+              process.cwd(),
+              path.resolve(`${outputFolderPath}/${filenameUUID}.png`)
+            );
+
+            const optimizedBuffer = await imagemin.buffer(resizedBuffer, {
+              plugins: [
+                imageminPngquant({
+                  speed: 1,
+                  quality: [0.3, 0.65],
+                }),
+              ],
+            });
+
+            console.log(
+              `Saved ${
+                resizedBuffer.byteLength - optimizedBuffer.byteLength
+              } bytes from compressing PNG.`
+            );
+
+            fs.writeFileSync(filePath, optimizedBuffer);
+
+            const fileUrl = `/assets/scully-image/${filenameUUID}.png`;
+
+            scullyImageUrlMap[scullyFullImageMapKey] = fileUrl;
+          }
+        }
+
+        if (!scullyImageUrlMap[scullyPreloaderImageMapKey]) {
           const promise = new Promise(async (resolve, reject) => {
             console.log("img", img.style.height);
-            const imageBody = await getUrl(src);
+            imageBody = imageBody || (await getImageData(src));
             console.log({ imageBody });
 
             const processedImage = await processImageIntoPreloader(
               imageBody,
               preloaderType,
-              pluginOptions
+              pluginOptions,
+              {
+                imagemin,
+                imageminPngquant,
+              }
             );
 
             // TODO: The key needs to take size into account for specificity
             try {
-              scullyImageUrlMap[scullyImageMapKey] = processedImage;
-              img.setAttribute("src", scullyImageUrlMap[scullyImageMapKey]);
+              scullyImageUrlMap[scullyPreloaderImageMapKey] = processedImage;
+              img.setAttribute(
+                "src",
+                scullyImageUrlMap[scullyPreloaderImageMapKey]
+              );
 
               const preloaderElement = img.querySelector(".preloaded-image");
               if (preloaderType === "base64") {
                 preloaderElement.setAttribute("src", processedImage);
               } else if (preloaderType === "tracedSVG") {
-                preloaderElement.setAttribute(
-                  "src",
-                  "data:image/svg+xml;utf8," + processedImage
-                );
+                preloaderElement.setAttribute("src", processedImage);
               } else if (preloaderType === "sqip") {
                 preloaderElement.setAttribute("src", processedImage);
               }
@@ -106,17 +252,17 @@ module.exports = {
               transferStateElement.innerHTML = newTransferStateString;
 
               doc.body.appendChild(transferStateElement);
-              resolve(scullyImageUrlMap[scullyImageMapKey]);
+              resolve(scullyImageUrlMap[scullyPreloaderImageMapKey]);
             } catch (lastError) {
               console.log({ lastError });
               reject(lastError);
             }
           });
-          scullyImageUrlMap[scullyImageMapKey] = promise;
+          scullyImageUrlMap[scullyPreloaderImageMapKey] = promise;
           return await promise;
         } else {
           console.log("Image already parsed");
-          const imageData = await scullyImageUrlMap[scullyImageMapKey];
+          const imageData = await scullyImageUrlMap[scullyPreloaderImageMapKey];
           img.setAttribute("src", imageData);
         }
       })
@@ -145,48 +291,68 @@ function getUrl(url) {
 }
 
 async function bufferToDataUri(buffer, format) {
-  var string = await buffer.toString("base64");
-  return `data:image/${format};base64,${string}`;
+  let mime;
+  if (format) {
+    mime = `image/${format}`;
+  } else {
+    const FileType = require("file-type");
+    mime = (await FileType.fromBuffer(buffer)).mime;
+  }
+  const string = await buffer.toString("base64");
+  return `data:${mime};base64,${string}`;
 }
 
 async function processImageIntoPreloader(
   imageBody,
   preloaderType,
-  pluginOptions
+  pluginOptions,
+  optimizers
 ) {
   if (preloaderType === "base64") {
+    const sharp = require("sharp");
     const resizedBuffer = await sharp(imageBody)
       .resize({ width: 42 })
       .png()
       .toBuffer();
 
-    console.log("before base64: ");
-    return bufferToDataUri(resizedBuffer, "png");
-  } else if (preloaderType === "sqip") {
-    const sqip = require("sqip").default;
-    fs.writeFileSync("./scratch.png", imageBody);
-    console.log("before sqip: ");
-    const result = await sqip({
-      input: "./scratch.png",
+    const optimizedBuffer = await optimizers.imagemin.buffer(resizedBuffer, {
       plugins: [
-        {
-          name: "primitive",
-          options: {
-            numberOfPrimitives: 20,
-            mode: 0,
-            ...pluginOptions,
-          },
-        },
-        "svgo",
-        "data-uri",
+        optimizers.imageminPngquant({
+          speed: 1,
+          quality: [0.3, 0.65],
+        }),
       ],
     });
-    return result.metadata.dataURIBase64;
+
+    console.log(
+      `Saved ${
+        resizedBuffer.byteLength - optimizedBuffer.byteLength
+      } bytes from compressing PNG.`
+    );
+
+    console.log("before base64: ");
+    return bufferToDataUri(optimizedBuffer);
+  } else if (preloaderType === "sqip") {
+    const primitive = require("primitive");
+    const SVGO = require("svgo");
+    const svgo = new SVGO(svgoOptions);
+    console.log("before primitive: ");
+    const unoptimized = await primitive({
+      input: await bufferToDataUri(imageBody),
+      numSteps: 10,
+    });
+    const optimized = await svgo.optimize(Buffer.from(unoptimized.toSVG()));
+    return bufferToDataUri(Buffer.from(optimized.data), "svg+xml");
   } else if (preloaderType === "tracedSVG") {
-    console.log("before sqip: ");
+    console.log("before trace: ");
     const { trace } = require("potrace");
+    const SVGO = require("svgo");
+    const svgo = new SVGO(svgoOptions);
     const potrace = promisify(trace);
-    return potrace(imageBody, pluginOptions);
+    const unoptimized = await potrace(imageBody, pluginOptions);
+    return svgo.optimize(unoptimized).then((result) => {
+      return bufferToDataUri(Buffer.from(result.data), "svg+xml");
+    });
   } else {
     throw new Error(`Unsupported preloader type: ${preloaderType}`);
   }
@@ -222,6 +388,29 @@ function extractTransferStateFromString(transferStateString) {
   };
 }
 
+function getImageData(src) {
+  const isURL = require("isurl");
+
+  let srcIsURL = false;
+  try {
+    const url = new URL(src);
+    srcIsURL = isURL(url);
+  } catch (e) {
+    console.log("Not a url");
+  }
+
+  if (srcIsURL) {
+    return getUrl(src);
+  } else {
+    const angularJson = require(`${process.cwd()}/angular.json`);
+    const defaultProject = angularJson.defaultProject;
+    const outputPath =
+      angularJson.projects[defaultProject].architect.build.options.outputPath;
+    const filePath = path.resolve(process.cwd(), `${outputPath}/${src}`);
+    return promisify(fs.readFile)(filePath);
+  }
+}
+
 // debug only
 process.on("uncaughtException", function (err) {
   console.log("uncaughtException", err);
@@ -229,6 +418,6 @@ process.on("uncaughtException", function (err) {
 });
 
 process.on("unhandledRejection", (error) => {
-  console.log("unhandledRejection", error.message);
+  console.log("unhandledRejection", error);
   process.exit(1);
 });

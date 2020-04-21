@@ -4,5 +4,18 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "whitelistedNonPeerDependencies": ["jsdom", "sharp", "potrace", "sqip"]
+  "whitelistedNonPeerDependencies": [
+    "jsdom",
+    "sharp",
+    "potrace",
+    "sqip",
+    "imagemin",
+    "imagemin-pngquant",
+    "uuid",
+    "svgo",
+    "mini-svg-data-uri",
+    "primitive",
+    "file-type",
+    "isurl"
+  ]
 }
