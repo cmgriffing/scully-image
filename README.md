@@ -6,4 +6,4 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 This README is a work in progress. In the meantime please see the documentation here:
 
-[https://cmgriffing.github.io/scully-image](https://cmgriffing.github.io/scully-image)
+[https://scully-image.github.io/](https://scully-image.github.io/)
