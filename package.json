@@ -12,7 +12,8 @@
     "watch": "nodemon -w plugin -w projects --exec \"npm run build\"",
     "watch:plugin": "nodemon -w plugin --exec \"npm run cp-plugin\"",
     "scully": "scully",
-    "scully:serve": "scully serve"
+    "scully:serve": "scully serve",
+    "deploy:docs": "npx gh-pages -d dist/documentation"
   },
   "private": true,
   "dependencies": {
