@@ -1,0 +1,37 @@
+@import "../../../variables";
+
+:host {
+  .component-type {
+    margin-top: 42px;
+
+    .img-wrapper {
+      width: 300px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      img.blur {
+        filter: blur(20px);
+      }
+    }
+  }
+
+  .component-input,
+  .plugin-option {
+    b {
+      font-size: 20px;
+    }
+
+    p {
+      padding-left: 20px;
+      margin-bottom: 32px;
+    }
+  }
+
+  .plugin-option p {
+    padding-left: 0;
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "assetsPath": "./assets",
+  "projectName": "documentation",
+  "defaultPreloaderOptions": {
+    "base64": {},
+    "tracedSVG": {},
+    "sqip": {}
+  }
+}

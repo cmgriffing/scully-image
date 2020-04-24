@@ -1,0 +1,72 @@
+<div class="page-container">
+  <div class="hero" fxLayout="row">
+    <div class="content">
+      <h1>Optimize the Things</h1>
+      <p>
+        scully-image processes your images at build time generating optimized
+        placeholder images and inlining them into the html. It can also handle
+        resizing and optimizing your images for you.
+      </p>
+    </div>
+  </div>
+
+  <h2>Features</h2>
+
+  <div class="features" fxLayout="row wrap">
+    <div class="feature" fxFlex.gt-md="33.3">
+      <mat-icon aria-hidden="true">collections</mat-icon>
+      <h3>Multiple Placeholder Types</h3>
+      <p>Choose from a variety of placeholder styles.</p>
+    </div>
+    <div class="feature" fxFlex.gt-md="33.3">
+      <mat-icon aria-hidden="true">settings</mat-icon>
+      <h3>Highly Configurable</h3>
+      <p>Change almost every aspect to fit your brand.</p>
+    </div>
+    <div class="feature" fxFlex.gt-md="33.3">
+      <mat-icon aria-hidden="true">check_box</mat-icon>
+      <h3>Easy-to-Use Components</h3>
+      <p>Spend less time on the boring parts.</p>
+    </div>
+  </div>
+
+  <h2>Placeholder Types</h2>
+
+  <div class="placeholders" fxLayout="row wrap">
+    <div class="placeholder" fxFlex.gt-md="33.3">
+      <a [routerLink]="'/docs/components-blur-up'">
+        <div class="blur-wrapper"><img [src]="scullyImageLowRes" /></div>
+        <h3 class="name">Blur Up</h3>
+      </a>
+    </div>
+    <div class="placeholder" fxFlex.gt-md="33.3">
+      <a [routerLink]="'/docs/components-traced'">
+        <img [src]="scullyImageTraced" />
+        <h3 class="name">Traced SVG</h3>
+      </a>
+    </div>
+    <div class="placeholder" fxFlex.gt-md="33.3">
+      <a [routerLink]="'/docs/components- primitives'">
+        <img [src]="scullyImagePrimitives" />
+        <h3 class="name">Primitives</h3>
+      </a>
+    </div>
+  </div>
+
+  <h2>Documentation</h2>
+
+  <div class="documentation" fxLayout="row wrap">
+    <div fxFlex.gt-md="50" fxLayout="row">
+      <mat-icon aria-hidden="true" fxFlex>settings_input_component</mat-icon>
+      <div fxFlex>
+        <a [routerLink]="'/docs/config'"><h3>Config</h3></a>
+      </div>
+    </div>
+    <div fxFlex.gt-md="50" fxLayout="row">
+      <mat-icon aria-hidden="true" fxFlex>extension</mat-icon>
+      <div fxFlex>
+        <a [routerLink]="'/docs/components'"><h3>Components</h3></a>
+      </div>
+    </div>
+  </div>
+</div>

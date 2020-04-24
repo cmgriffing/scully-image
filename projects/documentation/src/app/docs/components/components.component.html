@@ -1,0 +1,70 @@
+<h2>Inputs</h2>
+
+<p>
+  All of these components share the same Inputs. The only differences are in the
+  pluginOptions accepted and the preloaderType passed under the hood.
+</p>
+
+<li class="component-input" *ngFor="let input of baseInputs">
+  <b>{{ input.name }}</b>
+  <span>{{ input.type }}</span>
+  <div *ngIf="input.defaultValue">Default value: {{ input.defaultValue }}</div>
+  <p>{{ input.description }}</p>
+</li>
+
+<div
+  [id]="component.id"
+  class="component-type"
+  *ngFor="let component of components"
+>
+  <h2>{{ component.title }}</h2>
+  <div fxLayout="row">
+    <div class="img-wrapper">
+      Example Placeholder
+      <img
+        [class.blur]="component.id === 'blur'"
+        [src]="imageSources[component.imageSource]"
+      />
+    </div>
+    <div class="img-wrapper">
+      <a [routerLink]="'/examples/' + component.id">Live Preview</a>
+      <scully-blur-image
+        *ngIf="component.id === 'blur'"
+        src="/assets/scully.jpeg"
+        [pluginOptions]="{ width: 20 }"
+      ></scully-blur-image>
+
+      <scully-primitives-image
+        *ngIf="component.id === 'primitives'"
+        src="/assets/scully.jpeg"
+        [pluginOptions]="{ numberOfPrimitives: 60 }"
+      ></scully-primitives-image>
+
+      <scully-traced-image
+        *ngIf="component.id === 'traced'"
+        [fluidMaxWidth]="800"
+        [pluginOptions]="{
+          color: '#3AA860',
+          optTolerance: 0.4,
+          turdSize: 10,
+          turnPolicy: 'majority'
+        }"
+        src="/assets/scully.jpeg"
+      ></scully-traced-image>
+    </div>
+  </div>
+  <div>
+    <p>{{ component.description }}</p>
+    <h3>pluginOptions</h3>
+    <ul>
+      <li class="plugin-option" *ngFor="let option of component.pluginOptions">
+        <b>{{ option.name }}</b>
+        <span>{{ option.type }}</span>
+        <div *ngIf="option.defaultValue">
+          Default value: {{ option.defaultValue }}
+        </div>
+        <p>{{ option.description }}</p>
+      </li>
+    </ul>
+  </div>
+</div>

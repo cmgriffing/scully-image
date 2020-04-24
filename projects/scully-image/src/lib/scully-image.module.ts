@@ -4,14 +4,14 @@ import {
   ScullyImageComponent,
   ScullyBlurImageComponent,
   ScullyTracedImageComponent,
-  ScullySqipImageComponent,
+  ScullyPrimitivesImageComponent,
 } from './scully-image.component';
 import { VisibilityService } from './visibility.service';
 
 const exportedComponents = [
   ScullyBlurImageComponent,
   ScullyTracedImageComponent,
-  ScullySqipImageComponent,
+  ScullyPrimitivesImageComponent,
 ];
 
 @NgModule({

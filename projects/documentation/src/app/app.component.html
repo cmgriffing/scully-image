@@ -1,0 +1,38 @@
+<ng-container *ngIf="!isExamplePage">
+  <header class="main-header" fxLayout="row">
+    <a class="logo" [routerLink]="['/']" fxFlex> scully-image</a>
+
+    <nav class="main-nav" fxFlex>
+      <a [routerLink]="['/docs/getting-started']" fxFlex>Getting Started</a>
+      <a [routerLink]="['/docs/config']" fxFlex>Config</a>
+      <a [routerLink]="['/docs/components']" fxFlex>Components</a>
+
+      <a
+        href="https://www.github.com/cmgriffing/scully-plugin-scully-image"
+        fxFlex
+      >
+        <img
+          _ngcontent-oga-c12=""
+          src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          width="40px"
+          heigth="40px"
+          alt="github"
+        />
+      </a>
+    </nav>
+  </header>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="main-footer" *ngIf="isHome">
+    <nav fxLayout="row">
+      <a [routerLink]="['/docs/getting-started']" fxFlex>Getting Started</a>
+      <a [routerLink]="['/docs/config']" fxFlex>Config</a>
+      <a [routerLink]="['/docs/components']" fxFlex>Components</a>
+    </nav>
+  </footer>
+</ng-container>
+<ng-container *ngIf="isExamplePage">
+  <router-outlet></router-outlet
+></ng-container>

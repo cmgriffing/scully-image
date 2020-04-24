@@ -1,0 +1,66 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "./variables";
+
+* {
+  font-family: Comfortaa, Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: $scully-black;
+  text-decoration-color: $scully-green;
+}
+
+main {
+  min-height: $full-height;
+  padding: 0 0 10px 10px;
+}
+
+.page-container {
+  margin: 0 auto;
+
+  @media (min-width: $breakpoint-mobile) {
+    max-width: $breakpoint-mobile;
+  }
+
+  @media (min-width: $breakpoint-tablet) {
+    max-width: $breakpoint-tablet;
+  }
+
+  @media (min-width: $breakpoint-medium) {
+    max-width: $breakpoint-medium;
+  }
+
+  @media (min-width: $breakpoint-large) {
+    max-width: $breakpoint-large;
+  }
+
+  @media (min-width: $breakpoint-xl) {
+    max-width: $breakpoint-xl;
+  }
+
+  @media (min-width: $breakpoint-xxl) {
+    max-width: $breakpoint-xxl;
+  }
+}
+
+pre {
+  background: $scully-night;
+  border-radius: 8px;
+  border-top: 15px solid #000;
+  overflow-x: auto;
+  min-height: 75px;
+  padding: 16px 35px 16px 20px;
+  margin: 35px 75px;
+}
+
+code {
+  background: $scully-night;
+  color: $scully-offwhite;
+}

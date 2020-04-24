@@ -1,0 +1,25 @@
+<scully-blur-image
+  *ngIf="exampleType === 'blur'"
+  [pixelHeight]="330"
+  [pixelWidth]="440"
+  src="/assets/scully.jpeg"
+  [pluginOptions]="{ width: 20 }"
+></scully-blur-image>
+
+<scully-primitives-image
+  *ngIf="exampleType === 'primitives'"
+  src="/assets/scully.jpeg"
+  [pluginOptions]="{ numberOfPrimitives: 60 }"
+></scully-primitives-image>
+
+<scully-traced-image
+  *ngIf="exampleType === 'traced'"
+  [fluidMaxWidth]="800"
+  [pluginOptions]="{
+    color: '#3AA860',
+    optTolerance: 0.4,
+    turdSize: 10,
+    turnPolicy: 'majority'
+  }"
+  src="/assets/scully.jpeg"
+></scully-traced-image>

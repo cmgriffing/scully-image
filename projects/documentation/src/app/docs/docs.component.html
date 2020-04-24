@@ -1,0 +1,39 @@
+<div class="doc-wrapper" fxLayout="row">
+  <div class="sidebar">
+    <ul>
+      <li *ngFor="let link of links">
+        <a
+          class="top-level-link"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ link.title }}
+        </a>
+        <ul *ngIf="link.title === 'Components'">
+          <li *ngFor="let component of components">
+            <a
+              class="fragment-link"
+              [routerLink]="['/docs/components/']"
+              [fragment]="component.id"
+              [class.active]="currentFragment === component.id"
+            >
+              {{ component.title }}
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="doc-content" fxFlex>
+    <div class="inner-wrapper">
+      <!-- This plain div wrapper is needed or else Scully removes the rest of the sibling elements -->
+      <div>
+        <scully-content></scully-content>
+      </div>
+      <ng-container *ngIf="currentRoute?.title === 'Components'">
+        <app-docs-components></app-docs-components>
+      </ng-container>
+    </div>
+  </div>
+</div>

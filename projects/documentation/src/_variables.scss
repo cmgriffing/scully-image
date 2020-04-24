@@ -1,0 +1,21 @@
+$scully-green: #3aa860;
+$scully-brightgreen: #6cce7a;
+$scully-night: #232d2a;
+$scully-darkgray: #4c615b;
+$scully-lightgray: #d3d3d3;
+$scully-offwhite: #fafbfc;
+$scully-white: #fff;
+$scully-black: #000;
+$scully-green-wash: rgba(58, 168, 96, 0.05);
+
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 720px;
+$breakpoint-medium: 960px;
+$breakpoint-large: 1200px;
+$breakpoint-xl: 1360px;
+$breakpoint-xxl: 1600px;
+
+$header-height: 50px;
+$footer-height: 120px;
+
+$full-height: calc(100vh - #{$header-height} - 10px);

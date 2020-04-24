@@ -20,7 +20,7 @@ import { filter, switchMap, take } from 'rxjs/operators';
 export enum PreloaderTypes {
   blur = 'base64',
   tracedSVG = 'tracedSVG',
-  sqip = 'sqip',
+  primitives = 'primitives',
 }
 
 const FULL = 'full';
@@ -29,25 +29,24 @@ export interface blurOptions {
   width: number;
 }
 
-export interface sqipOptions {
-  numberOfPrimitives?: number;
-  mode?: sqipModes;
-  rep?: number;
-  alpha?: number;
-  cores?: number;
-  background?: string;
+export enum PrimitivesShapes {
+  triangle = 'triangle',
+  ellipse = 'ellipse',
+  rotatedEellipse = 'rotated-ellipse',
+  rectangle = 'rectangle',
+  rotatedRectangle = 'rotatedRectangle',
+  random = 'random',
 }
 
-export enum sqipModes {
-  combo = 0,
-  triangle = 1,
-  rect = 2,
-  ellipse = 3,
-  circle = 4,
-  rotatedrect = 5,
-  beziers = 6,
-  rotatedellipse = 7,
-  polygon = 8,
+export interface primitivesOptions {
+  numSteps?: number; // 1 - 1000, default 200
+  minEnergy?: number; // 0-1
+  shapeAlpha?: number; //  0-255 default 128
+  shapeType?: PrimitivesShapes; // default triangle
+  numCandidates?: number; // 1-32, default 1
+  numCandidateShapes?: number; // 10-1000, 50
+  numCandidateMutations?: number; // 10-500, 100
+  numCandidateExtras?: number; // 0-16, 0
 }
 
 export interface tracedOptions {
@@ -178,7 +177,7 @@ export class ScullyImageComponent {
   lazy = true;
 
   @Input()
-  pluginOptions: blurOptions | sqipOptions | tracedOptions = {};
+  pluginOptions: blurOptions | primitivesOptions | tracedOptions = {};
 
   @Input()
   preloader = PreloaderTypes.blur;
@@ -236,7 +235,7 @@ export class ScullyImageComponent {
           console.log('pluginOptions', this.pluginOptions);
           this.preloadedSrc =
             scullyImageUrlMap[this.getImageKey(this.preloader)];
-          if (this.preloader === PreloaderTypes.sqip) {
+          if (this.preloader === PreloaderTypes.primitives) {
             this.preloadedSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
               this.preloadedSrc
             );
@@ -394,14 +393,14 @@ export class ScullyTracedImageComponent extends ScullyImageComponent
 }
 
 @Component({
-  selector: 'scully-sqip-image',
+  selector: 'scully-primitives-image',
   template,
   styles: [componentStyles],
 })
-export class ScullySqipImageComponent extends ScullyImageComponent
+export class ScullyPrimitivesImageComponent extends ScullyImageComponent
   implements OnInit, OnChanges, OnDestroy {
   @Input()
-  preloader = PreloaderTypes.sqip;
+  preloader = PreloaderTypes.primitives;
 
   @HostBinding('style.height')
   get height() {

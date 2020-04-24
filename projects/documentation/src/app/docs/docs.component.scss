@@ -1,0 +1,67 @@
+@import "../../variables";
+
+$sidebar-width: 320px;
+
+:host {
+  .doc-wrapper {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .sidebar {
+    background: $scully-green-wash;
+    height: 100%;
+    width: $sidebar-width;
+    height: $full-height;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    ul {
+      li {
+        list-style: none;
+        padding-top: 1rem;
+        padding-bottom: 8px;
+
+        a {
+          color: $scully-darkgray;
+          text-decoration: none;
+
+          &.active {
+            padding-left: 20px;
+
+            &.top-level-link::before {
+              content: "";
+              height: 16px;
+              width: 16px;
+              position: absolute;
+              left: -10px;
+              background: $scully-green;
+              border-radius: 10px;
+            }
+
+            &.fragment-link {
+              font-weight: 600;
+              color: $scully-night;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .doc-content {
+    padding-left: 2rem;
+    height: $full-height;
+    overflow-y: auto;
+
+    .inner-wrapper {
+      @media (min-width: $breakpoint-medium) {
+        width: calc(100vw - #{$sidebar-width} - 30px - 2rem);
+        max-width: 800px;
+      }
+      @media (min-width: $breakpoint-large) {
+        width: calc(100vw - #{$sidebar-width} - #{$sidebar-width});
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ let scullyImageConfig = {
   defaultPreloaderOptions: {
     base64: {},
     tracedSVG: {},
-    sqip: {},
+    primitives: {},
   },
 };
 try {
@@ -56,7 +56,7 @@ module.exports = {
     const doc = dom.window.document;
 
     const imgElements = doc.querySelectorAll(
-      "scully-image, scully-blur-image, scully-traced-image, scully-sqip-image"
+      "scully-image, scully-blur-image, scully-traced-image, scully-primitives-image"
     );
 
     console.log({ imgElements: imgElements.length });
@@ -99,7 +99,7 @@ module.exports = {
 
     await Promise.all(
       Array.from(imgElements).map(async (img) => {
-        const uuidv5 = require("uuid").v5;
+        const uuidv5 = require("uuid/v5");
         const imagemin = require("imagemin");
         const imageminPngquant = require("imagemin-pngquant");
         const sharp = require("sharp");
@@ -239,7 +239,7 @@ module.exports = {
                 preloaderElement.setAttribute("src", processedImage);
               } else if (preloaderType === "tracedSVG") {
                 preloaderElement.setAttribute("src", processedImage);
-              } else if (preloaderType === "sqip") {
+              } else if (preloaderType === "primitives") {
                 preloaderElement.setAttribute("src", processedImage);
               }
 
@@ -296,7 +296,7 @@ async function bufferToDataUri(buffer, format) {
     mime = `image/${format}`;
   } else {
     const FileType = require("file-type");
-    mime = (await FileType.fromBuffer(buffer)).mime;
+    mime = (await FileType(buffer)).mime;
   }
   const string = await buffer.toString("base64");
   return `data:${mime};base64,${string}`;
@@ -332,14 +332,14 @@ async function processImageIntoPreloader(
 
     console.log("before base64: ");
     return bufferToDataUri(optimizedBuffer);
-  } else if (preloaderType === "sqip") {
+  } else if (preloaderType === "primitives") {
     const primitive = require("primitive");
     const SVGO = require("svgo");
     const svgo = new SVGO(svgoOptions);
     console.log("before primitive: ");
     const unoptimized = await primitive({
       input: await bufferToDataUri(imageBody),
-      numSteps: 10,
+      numSteps: pluginOptions.numberOfPrimitives,
     });
     const optimized = await svgo.optimize(Buffer.from(unoptimized.toSVG()));
     return bufferToDataUri(Buffer.from(optimized.data), "svg+xml");
@@ -403,9 +403,12 @@ function getImageData(src) {
     return getUrl(src);
   } else {
     const angularJson = require(`${process.cwd()}/angular.json`);
-    const defaultProject = angularJson.defaultProject;
+    let projectName = angularJson.defaultProject;
+    if (scullyImageConfig.projectName && scullyImageConfig.projectName !== "") {
+      projectName = scullyImageConfig.projectName;
+    }
     const outputPath =
-      angularJson.projects[defaultProject].architect.build.options.outputPath;
+      angularJson.projects[projectName].architect.build.options.outputPath;
     const filePath = path.resolve(process.cwd(), `${outputPath}/${src}`);
     return promisify(fs.readFile)(filePath);
   }
