@@ -1,6 +1,6 @@
 const { registerPlugin } = require("@scullyio/scully");
 
-const { registerScullyImage } = require("./dist/scully-image/plugin");
+const { registerScullyImage } = require("scully-image/plugin");
 
 registerScullyImage(registerPlugin);
 
