@@ -13,7 +13,8 @@
     "watch:plugin": "nodemon -w plugin --exec \"npm run cp-plugin\"",
     "scully": "scully",
     "scully:serve": "scully serve",
-    "deploy:docs": "npx gh-pages -d dist/documentation"
+    "docs:build": "npm run ng build documentation",
+    "docs:deploy": "npx gh-pages -d dist/static -r https://github.com/scully-image/scully-image.github.io.git -b master"
   },
   "private": true,
   "dependencies": {
@@ -61,6 +62,6 @@
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
     "typescript": "~3.7.5",
-    "scully-image": "^0.0.1"
+    "scully-image": "^0.0.5"
   }
 }
