@@ -10,6 +10,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ScullyImageModule } from 'scully-image';
 
+// dev
+// import { ScullyImageModule } from '../../../../dist/scully-image';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [

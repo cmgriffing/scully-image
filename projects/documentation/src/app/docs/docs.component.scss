@@ -26,8 +26,16 @@ $sidebar-width: 320px;
           color: $scully-darkgray;
           text-decoration: none;
 
+          &.top-level-link + ul {
+            display: none;
+          }
+
           &.active {
             padding-left: 20px;
+
+            &.top-level-link + ul {
+              display: initial;
+            }
 
             &.top-level-link::before {
               content: "";

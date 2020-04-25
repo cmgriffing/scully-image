@@ -29,7 +29,24 @@
       <p>Spend less time on the boring parts.</p>
     </div>
   </div>
+</div>
 
+<div class="get-started-now">
+  <div class="page-container">
+    <h2>What are you waiting for?</h2>
+    <div>
+      <a
+        mat-raised-button
+        color="primary"
+        [routerLink]="'/docs/getting-started'"
+        class="get-started-now-button"
+      >
+        Get Started Now
+      </a>
+    </div>
+  </div>
+</div>
+<div class="page-container">
   <h2>Placeholder Types</h2>
 
   <div class="placeholders" fxLayout="row wrap">
@@ -50,23 +67,6 @@
         <img [src]="scullyImagePrimitives" />
         <h3 class="name">Primitives</h3>
       </a>
-    </div>
-  </div>
-
-  <h2>Documentation</h2>
-
-  <div class="documentation" fxLayout="row wrap">
-    <div fxFlex.gt-md="50" fxLayout="row">
-      <mat-icon aria-hidden="true" fxFlex>settings_input_component</mat-icon>
-      <div fxFlex>
-        <a [routerLink]="'/docs/config'"><h3>Config</h3></a>
-      </div>
-    </div>
-    <div fxFlex.gt-md="50" fxLayout="row">
-      <mat-icon aria-hidden="true" fxFlex>extension</mat-icon>
-      <div fxFlex>
-        <a [routerLink]="'/docs/components'"><h3>Components</h3></a>
-      </div>
     </div>
   </div>
 </div>

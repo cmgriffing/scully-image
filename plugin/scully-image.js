@@ -56,7 +56,7 @@ module.exports = {
     const doc = dom.window.document;
 
     const imgElements = doc.querySelectorAll(
-      "scully-image, scully-blur-image, scully-traced-image, scully-primitives-image"
+      "scully-image, scully-blur-image, scully-traced-image, scully-primitives-image, scully-pixels-image"
     );
 
     console.log({ imgElements: imgElements.length });
@@ -235,13 +235,7 @@ module.exports = {
               );
 
               const preloaderElement = img.querySelector(".preloaded-image");
-              if (preloaderType === "base64") {
-                preloaderElement.setAttribute("src", processedImage);
-              } else if (preloaderType === "tracedSVG") {
-                preloaderElement.setAttribute("src", processedImage);
-              } else if (preloaderType === "primitives") {
-                preloaderElement.setAttribute("src", processedImage);
-              }
+              preloaderElement.setAttribute("src", processedImage);
 
               transferState.scullyImageUrlMap = scullyImageUrlMap;
 
@@ -353,6 +347,52 @@ async function processImageIntoPreloader(
     return svgo.optimize(unoptimized).then((result) => {
       return bufferToDataUri(Buffer.from(result.data), "svg+xml");
     });
+  } else if (preloaderType === "pixels") {
+    const window = require("svgdom");
+    const sharp = require("sharp");
+    const { SVG, registerWindow } = require("@svgdotjs/svg.js");
+
+    console.log("INSIDE PIXELS");
+    const options = { width: 8, pixelSize: 100, ...pluginOptions };
+
+    console.log("AFTER PIXELS IMPORTS");
+    registerWindow(window, window.document);
+    console.log("AFTER REGISTER WINDOW");
+    const { width, pixelSize } = options;
+
+    const { data, info } = await sharp(imageBody)
+      .resize({ width })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    console.log("AFTER PIXELS SHARP");
+
+    let column = 0;
+    let row = 0;
+
+    const canvas = SVG().size(info.width * pixelSize, info.height * pixelSize);
+
+    console.log("AFTER PIXELS SVG");
+
+    for (let i = 0; i < data.length; i += 3) {
+      const red = data[i];
+      const green = data[i + 1];
+      const blue = data[i + 2];
+      canvas
+        .rect(1 * pixelSize, 1 * pixelSize)
+        .attr({ fill: `rgb(${red},${green},${blue})` })
+        .move(column * pixelSize, row * pixelSize);
+      column++;
+      if (column >= info.width) {
+        column = 0;
+        row++;
+      }
+    }
+
+    console.log("AFTER PIXELS LOOP");
+    const pixelSvg = canvas.svg();
+
+    return bufferToDataUri(Buffer.from(pixelSvg), "svg+xml");
   } else {
     throw new Error(`Unsupported preloader type: ${preloaderType}`);
   }

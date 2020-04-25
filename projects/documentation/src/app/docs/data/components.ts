@@ -191,4 +191,24 @@ export const components = [
       },
     ],
   },
+  {
+    id: 'pixels',
+    title: '<scully-pixels-image>',
+    imageSource: 'scullyImagePixels',
+    description: '',
+    pluginOptions: [
+      {
+        name: 'width',
+        type: 'number',
+        defaultValue: '8',
+        description: 'Amount of pixels per row',
+      },
+      {
+        name: 'pixelSize',
+        type: 'number',
+        defaultValue: '100',
+        description: 'Width of each pixel',
+      },
+    ],
+  },
 ];

@@ -21,6 +21,7 @@ export enum PreloaderTypes {
   blur = 'base64',
   tracedSVG = 'tracedSVG',
   primitives = 'primitives',
+  pixels = 'pixels',
 }
 
 const FULL = 'full';
@@ -68,6 +69,11 @@ export enum tracedTurnPolicies {
   TURNPOLICY_RIGHT = 'right',
   TURNPOLICY_MINORITY = 'minority',
   TURNPOLICY_MAJORITY = 'majority',
+}
+
+export interface pixelsOptions {
+  width?: number;
+  pixelSize?: number;
 }
 
 export const SCULLY_IMAGE_URL_MAP = 'scullyImageUrlMap';
@@ -125,6 +131,7 @@ const componentStyles = `
 
 :host .preloaded-image-fade-hack {
   position: absolute;
+  pointer-events: none;
   top: 0;
   left: 0;
   z-index: 3;
@@ -177,7 +184,11 @@ export class ScullyImageComponent {
   lazy = true;
 
   @Input()
-  pluginOptions: blurOptions | primitivesOptions | tracedOptions = {};
+  pluginOptions:
+    | blurOptions
+    | primitivesOptions
+    | tracedOptions
+    | pixelsOptions = {};
 
   @Input()
   preloader = PreloaderTypes.blur;
@@ -240,6 +251,10 @@ export class ScullyImageComponent {
               this.preloadedSrc
             );
           } else if (this.preloader === PreloaderTypes.tracedSVG) {
+            this.preloadedSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
+              this.preloadedSrc
+            );
+          } else if (this.preloader === PreloaderTypes.pixels) {
             this.preloadedSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
               this.preloadedSrc
             );
@@ -401,6 +416,45 @@ export class ScullyPrimitivesImageComponent extends ScullyImageComponent
   implements OnInit, OnChanges, OnDestroy {
   @Input()
   preloader = PreloaderTypes.primitives;
+
+  @HostBinding('style.height')
+  get height() {
+    return this.getHeight();
+  }
+
+  @HostBinding('style.width')
+  get width() {
+    return this.getWidth();
+  }
+
+  @HostBinding('attr.data-type')
+  get type() {
+    return this.preloader;
+  }
+
+  @HostBinding('attr.data-plugin-options')
+  get pluginOptionsAsString() {
+    return JSON.stringify(this.pluginOptions);
+  }
+
+  ngOnInit(): void {
+    this.baseInit();
+  }
+
+  ngOnDestroy() {
+    this.baseOnDestroy();
+  }
+}
+
+@Component({
+  selector: 'scully-pixels-image',
+  template,
+  styles: [componentStyles],
+})
+export class ScullyPixelsImageComponent extends ScullyImageComponent
+  implements OnInit, OnChanges, OnDestroy {
+  @Input()
+  preloader = PreloaderTypes.pixels;
 
   @HostBinding('style.height')
   get height() {

@@ -16,6 +16,8 @@
     "mini-svg-data-uri",
     "primitive",
     "file-type",
-    "isurl"
+    "isurl",
+    "svgdom",
+    "@svgdotjs/svg.js"
   ]
 }

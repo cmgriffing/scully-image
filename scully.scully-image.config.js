@@ -2,6 +2,8 @@ const { registerPlugin } = require("@scullyio/scully");
 
 const { registerScullyImage } = require("scully-image/plugin");
 
+// const { registerScullyImage } = require("./dist/scully-image/plugin");
+
 registerScullyImage(registerPlugin);
 
 function examplesRoutesPlugin(route, config = {}) {
@@ -9,6 +11,7 @@ function examplesRoutesPlugin(route, config = {}) {
     { route: "/examples/blur" },
     { route: "/examples/traced" },
     { route: "/examples/primitives" },
+    { route: "/examples/pixels" },
   ]);
 }
 

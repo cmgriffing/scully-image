@@ -20,7 +20,7 @@ If not, head on over to the Scully documentation to get started: [https://scully
 Add to dependencies
 
 ```
-npm install --save scully-plugin-scully-image
+npm install --save scully-image
 ```
 
 Make sure you have the following dependencies already:

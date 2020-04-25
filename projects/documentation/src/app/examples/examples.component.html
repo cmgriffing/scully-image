@@ -13,7 +13,6 @@
 ></scully-primitives-image>
 
 <scully-traced-image
-  *ngIf="exampleType === 'traced'"
   [fluidMaxWidth]="800"
   [pluginOptions]="{
     color: '#3AA860',
@@ -23,3 +22,8 @@
   }"
   src="/assets/scully.jpeg"
 ></scully-traced-image>
+
+<scully-pixels-image
+  *ngIf="exampleType === 'pixels'"
+  src="/assets/scully.jpeg"
+></scully-pixels-image>
