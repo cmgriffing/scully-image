@@ -59,21 +59,17 @@ module.exports = {
       "scully-image, scully-blur-image, scully-traced-image, scully-primitives-image, scully-pixels-image"
     );
 
-    console.log({ imgElements: imgElements.length });
-
     const transferStateElement = doc.getElementById("ScullyIO-transfer-state");
 
     doc.body.removeChild(transferStateElement);
 
-    console.log("TRANSFERSTATE", transferStateElement.innerHTML);
-
     const transferStateString = transferStateElement.innerHTML;
 
     if (!transferStateString || transferStateString === "") {
-      console.log(
-        "bailing out of scully image since we have no transferstate",
-        transferStateString
-      );
+      // console.log(
+      //   "bailing out of scully image since we have no transferstate",
+      //   transferStateString
+      // );
       doc.body.appendChild(transferStateElement);
       // If transferState is empty we quit out.
       return html;
@@ -86,14 +82,13 @@ module.exports = {
     } = extractTransferStateFromString(transferStateString);
 
     if (!transferState.scullyImageUrlMap) {
-      console.log(
-        "bailing out of scully image since we have no scully image specific transferstate"
-      );
+      // console.log(
+      //   "bailing out of scully image since we have no scully image specific transferstate"
+      // );
       // If transferState is empty we quit out.
       doc.body.appendChild(transferStateElement);
       return html;
     }
-    console.log("imageUrlMap", transferState.scullyImageUrlMap);
 
     const scullyImageUrlMap = {};
 
@@ -104,9 +99,7 @@ module.exports = {
         const imageminPngquant = require("imagemin-pngquant");
         const sharp = require("sharp");
         // TODO: get child img element from lib-scully-image element
-        console.log({ img });
         const preloaderType = img.getAttribute("data-type");
-        console.log({ preloaderType });
         const src = img.getAttribute("src");
         const pluginOptionsString = img.getAttribute("data-plugin-options");
         const pluginOptions = JSON.parse(pluginOptionsString);
@@ -117,12 +110,6 @@ module.exports = {
         const fluidMaxWidth = +img.getAttribute("ng-reflect-fluid-max-width");
         const fluidMaxHeight = +img.getAttribute("ng-reflect-fluid-max-height");
 
-        console.log("height and width values: ", {
-          pixelHeight,
-          pixelWidth,
-          fluidMaxHeight,
-          fluidMaxWidth,
-        });
         const scullyPreloaderImageMapKey =
           src +
           preloaderType +
@@ -196,11 +183,11 @@ module.exports = {
               ],
             });
 
-            console.log(
-              `Saved ${
-                resizedBuffer.byteLength - optimizedBuffer.byteLength
-              } bytes from compressing PNG.`
-            );
+            // console.log(
+            //   `Saved ${
+            //     resizedBuffer.byteLength - optimizedBuffer.byteLength
+            //   } bytes from compressing PNG.`
+            // );
 
             fs.writeFileSync(filePath, optimizedBuffer);
 
@@ -212,9 +199,7 @@ module.exports = {
 
         if (!scullyImageUrlMap[scullyPreloaderImageMapKey]) {
           const promise = new Promise(async (resolve, reject) => {
-            console.log("img", img.style.height);
             imageBody = imageBody || (await getImageData(src));
-            console.log({ imageBody });
 
             const processedImage = await processImageIntoPreloader(
               imageBody,
@@ -248,14 +233,13 @@ module.exports = {
               doc.body.appendChild(transferStateElement);
               resolve(scullyImageUrlMap[scullyPreloaderImageMapKey]);
             } catch (lastError) {
-              console.log({ lastError });
               reject(lastError);
             }
           });
           scullyImageUrlMap[scullyPreloaderImageMapKey] = promise;
           return await promise;
         } else {
-          console.log("Image already parsed");
+          // console.log("Image already parsed");
           const imageData = await scullyImageUrlMap[scullyPreloaderImageMapKey];
           img.setAttribute("src", imageData);
         }
@@ -270,7 +254,6 @@ module.exports = {
 
 function getUrl(url) {
   return new Promise((resolve, reject) => {
-    console.log({ url });
     https.get(url, function (response) {
       // Continuously update stream with data
       const body = [];
@@ -318,19 +301,17 @@ async function processImageIntoPreloader(
       ],
     });
 
-    console.log(
-      `Saved ${
-        resizedBuffer.byteLength - optimizedBuffer.byteLength
-      } bytes from compressing PNG.`
-    );
+    // console.log(
+    //   `Saved ${
+    //     resizedBuffer.byteLength - optimizedBuffer.byteLength
+    //   } bytes from compressing PNG.`
+    // );
 
-    console.log("before base64: ");
     return bufferToDataUri(optimizedBuffer);
   } else if (preloaderType === "primitives") {
     const primitive = require("primitive");
     const SVGO = require("svgo");
     const svgo = new SVGO(svgoOptions);
-    console.log("before primitive: ");
     const unoptimized = await primitive({
       input: await bufferToDataUri(imageBody),
       numSteps: pluginOptions.numberOfPrimitives,
@@ -338,7 +319,6 @@ async function processImageIntoPreloader(
     const optimized = await svgo.optimize(Buffer.from(unoptimized.toSVG()));
     return bufferToDataUri(Buffer.from(optimized.data), "svg+xml");
   } else if (preloaderType === "tracedSVG") {
-    console.log("before trace: ");
     const { trace } = require("potrace");
     const SVGO = require("svgo");
     const svgo = new SVGO(svgoOptions);
@@ -352,12 +332,9 @@ async function processImageIntoPreloader(
     const sharp = require("sharp");
     const { SVG, registerWindow } = require("@svgdotjs/svg.js");
 
-    console.log("INSIDE PIXELS");
     const options = { width: 8, pixelSize: 100, ...pluginOptions };
 
-    console.log("AFTER PIXELS IMPORTS");
     registerWindow(window, window.document);
-    console.log("AFTER REGISTER WINDOW");
     const { width, pixelSize } = options;
 
     const { data, info } = await sharp(imageBody)
@@ -365,14 +342,10 @@ async function processImageIntoPreloader(
       .raw()
       .toBuffer({ resolveWithObject: true });
 
-    console.log("AFTER PIXELS SHARP");
-
     let column = 0;
     let row = 0;
 
     const canvas = SVG().size(info.width * pixelSize, info.height * pixelSize);
-
-    console.log("AFTER PIXELS SVG");
 
     for (let i = 0; i < data.length; i += 3) {
       const red = data[i];
@@ -389,7 +362,6 @@ async function processImageIntoPreloader(
       }
     }
 
-    console.log("AFTER PIXELS LOOP");
     const pixelSvg = canvas.svg();
 
     return bufferToDataUri(Buffer.from(pixelSvg), "svg+xml");
@@ -399,7 +371,6 @@ async function processImageIntoPreloader(
 }
 
 function extractTransferStateFromString(transferStateString) {
-  console.log({ transferStateString });
   const transferStateStartIndex =
     transferStateString.indexOf(scullyTransferStateStartString) +
     scullyTransferStateStartString.length;
@@ -436,7 +407,7 @@ function getImageData(src) {
     const url = new URL(src);
     srcIsURL = isURL(url);
   } catch (e) {
-    console.log("Not a url");
+    // console.log("Not a url");
   }
 
   if (srcIsURL) {
@@ -455,12 +426,12 @@ function getImageData(src) {
 }
 
 // debug only
-process.on("uncaughtException", function (err) {
-  console.log("uncaughtException", err);
-  process.exit(1);
-});
+// process.on("uncaughtException", function (err) {
+//   console.log("uncaughtException", err);
+//   process.exit(1);
+// });
 
-process.on("unhandledRejection", (error) => {
-  console.log("unhandledRejection", error);
-  process.exit(1);
-});
+// process.on("unhandledRejection", (error) => {
+//   console.log("unhandledRejection", error);
+//   process.exit(1);
+// });
