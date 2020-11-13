@@ -1,6 +1,6 @@
 {
   "name": "scully-image",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "dependencies": {
     "sharp": "^0.25.2",
     "potrace": "2.1.5",

@@ -6,6 +6,11 @@ const fs = require("fs");
 const https = require("https");
 const path = require("path");
 
+const uuidv5 = require("uuid/v5");
+const imagemin = require("imagemin");
+const imageminPngquant = require("imagemin-pngquant");
+const sharp = require("sharp");
+
 const UUID_NAMESPACE = "363f57fa-aa19-425d-9be4-204658e11a5f";
 
 const svgoOptions = {
@@ -94,10 +99,6 @@ module.exports = {
 
     await Promise.all(
       Array.from(imgElements).map(async (img) => {
-        const uuidv5 = require("uuid/v5");
-        const imagemin = require("imagemin");
-        const imageminPngquant = require("imagemin-pngquant");
-        const sharp = require("sharp");
         // TODO: get child img element from lib-scully-image element
         const preloaderType = img.getAttribute("data-type");
         const src = img.getAttribute("src");
