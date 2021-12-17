@@ -1,0 +1,11 @@
+identifier: kfx6aav9kbq5ifkc
+appPort: 1864
+staticPort: 1668
+reloadPort: 2667
+hostName: localhost
+projectName: documentation
+homeFolder: /Volumes/T7/repos/scully-image
+distFolder: dist/documentation
+outDir: /Volumes/T7/repos/scully-image/dist/static
+handle404: ''
+allowErrorCollect: false

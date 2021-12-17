@@ -1,6 +1,6 @@
 {
   "name": "scully-image",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "dependencies": {
     "sharp": "^0.25.2",
     "potrace": "2.1.5",
@@ -26,17 +26,17 @@
     "primitive": "^1.0.1",
     "file-type": "^9.0.0",
     "isurl": "^4.0.1",
-    "@angular/common": "^9.0.1",
-    "@angular/core": "^9.0.1",
+    "@angular/common": "^13.1.1",
+    "@angular/core": "^13.1.1",
     "@scullyio/scully": "latest",
     "@scullyio/ng-lib": "latest",
     "tslib": "^1.10.0"
   },
   "peerDependencies": {
-    "@angular/common": "^9.0.1",
-    "@angular/core": "^9.0.1",
-    "@scullyio/scully": "latest",
-    "@scullyio/ng-lib": "latest",
+    "@angular/common": "^13.1.1",
+    "@angular/core": "^13.1.1",
+    "@scullyio/scully": "^2.0.3",
+    "@scullyio/ng-lib": "^2.0.2",
     "tslib": "^1.10.0"
   }
 }
