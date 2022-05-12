@@ -102,11 +102,11 @@ module.exports = {
         const pluginOptionsString = img.getAttribute("data-plugin-options");
         const pluginOptions = JSON.parse(pluginOptionsString);
 
-        const pixelHeight = +img.getAttribute("ng-reflect-pixel-height");
-        const pixelWidth = +img.getAttribute("ng-reflect-pixel-width");
+        const pixelHeight = +img.getAttribute("data-pixel-height");
+        const pixelWidth = +img.getAttribute("data-pixel-width");
 
-        const fluidMaxWidth = +img.getAttribute("ng-reflect-fluid-max-width");
-        const fluidMaxHeight = +img.getAttribute("ng-reflect-fluid-max-height");
+        const fluidMaxWidth = +img.getAttribute("data-fluid-max-width");
+        const fluidMaxHeight = +img.getAttribute("data-fluid-max-height");
 
         const scullyPreloaderImageMapKey =
           src +

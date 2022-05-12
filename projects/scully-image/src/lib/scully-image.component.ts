@@ -219,6 +219,26 @@ export class ScullyImageComponent {
     return this.getWidth();
   }
 
+  @HostBinding('attr.data-pixel-width')
+  get pixelWidthAsAttr() {
+    return this.pixelWidth;
+  }
+
+  @HostBinding('attr.data-pixel-height')
+  get pixelHeightAsAttr() {
+    return this.pixelHeight;
+  }
+
+  @HostBinding('attr.data-fluid-max-width')
+  get fluidMaxWidthAsAttr() {
+    return this.fluidMaxWidth;
+  }
+
+  @HostBinding('attr.data-fluid-max-height')
+  get fluidMaxHeightAsAttr() {
+    return this.fluidMaxHeight;
+  }
+
   imageLoaded = false;
   scullyImageUrlMap = {};
   preloadedSrc: any = '';
@@ -359,6 +379,26 @@ export class ScullyBlurImageComponent
     return JSON.stringify(this.pluginOptions);
   }
 
+  @HostBinding('attr.data-pixel-width')
+  get pixelWidthAsAttr() {
+    return this.pixelWidth;
+  }
+
+  @HostBinding('attr.data-pixel-height')
+  get pixelHeightAsAttr() {
+    return this.pixelHeight;
+  }
+
+  @HostBinding('attr.data-fluid-max-width')
+  get fluidMaxWidthAsAttr() {
+    return this.fluidMaxWidth;
+  }
+
+  @HostBinding('attr.data-fluid-max-height')
+  get fluidMaxHeightAsAttr() {
+    return this.fluidMaxHeight;
+  }
+
   ngOnInit(): void {
     this.baseInit();
   }
@@ -398,6 +438,26 @@ export class ScullyTracedImageComponent
   @HostBinding('attr.data-plugin-options')
   get pluginOptionsAsString() {
     return JSON.stringify(this.pluginOptions);
+  }
+
+  @HostBinding('attr.data-pixel-width')
+  get pixelWidthAsAttr() {
+    return this.pixelWidth;
+  }
+
+  @HostBinding('attr.data-pixel-height')
+  get pixelHeightAsAttr() {
+    return this.pixelHeight;
+  }
+
+  @HostBinding('attr.data-fluid-max-width')
+  get fluidMaxWidthAsAttr() {
+    return this.fluidMaxWidth;
+  }
+
+  @HostBinding('attr.data-fluid-max-height')
+  get fluidMaxHeightAsAttr() {
+    return this.fluidMaxHeight;
   }
 
   ngOnInit(): void {
@@ -441,6 +501,26 @@ export class ScullyPrimitivesImageComponent
     return JSON.stringify(this.pluginOptions);
   }
 
+  @HostBinding('attr.data-pixel-width')
+  get pixelWidthAsAttr() {
+    return this.pixelWidth;
+  }
+
+  @HostBinding('attr.data-pixel-height')
+  get pixelHeightAsAttr() {
+    return this.pixelHeight;
+  }
+
+  @HostBinding('attr.data-fluid-max-width')
+  get fluidMaxWidthAsAttr() {
+    return this.fluidMaxWidth;
+  }
+
+  @HostBinding('attr.data-fluid-max-height')
+  get fluidMaxHeightAsAttr() {
+    return this.fluidMaxHeight;
+  }
+
   ngOnInit(): void {
     this.baseInit();
   }
@@ -480,6 +560,26 @@ export class ScullyPixelsImageComponent
   @HostBinding('attr.data-plugin-options')
   get pluginOptionsAsString() {
     return JSON.stringify(this.pluginOptions);
+  }
+
+  @HostBinding('attr.data-pixel-width')
+  get pixelWidthAsAttr() {
+    return this.pixelWidth;
+  }
+
+  @HostBinding('attr.data-pixel-height')
+  get pixelHeightAsAttr() {
+    return this.pixelHeight;
+  }
+
+  @HostBinding('attr.data-fluid-max-width')
+  get fluidMaxWidthAsAttr() {
+    return this.fluidMaxWidth;
+  }
+
+  @HostBinding('attr.data-fluid-max-height')
+  get fluidMaxHeightAsAttr() {
+    return this.fluidMaxHeight;
   }
 
   ngOnInit(): void {
