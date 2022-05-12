@@ -14,7 +14,7 @@
     "scully": "scully --pjFirst",
     "scully:serve": "scully serve",
     "docs:build": "npm run ng build documentation",
-    "docs:deploy": "npx gh-pages -d dist/static -r https://github.com/scully-image/scully-image.github.io.git -b master"
+    "docs:deploy": "npx gh-pages -d dist/static -r https://github.com/scully-image/scully-image.github.io.git -b main -f"
   },
   "private": true,
   "dependencies": {
