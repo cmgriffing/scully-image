@@ -1,6 +1,6 @@
 {
   "name": "scully-image",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "dependencies": {
     "sharp": "^0.25.2",
     "potrace": "2.1.5",
@@ -38,7 +38,9 @@
     "@scullyio/scully": "^2.0.3",
     "@scullyio/ng-lib": "^2.0.2"
   },
-  "./plugin": {
-    "default": "./plugin/index.js"
+  "exports": {
+    "./plugin": {
+      "default": "./plugin/index.js"
+    }
   }
 }
