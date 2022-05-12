@@ -87,9 +87,6 @@ module.exports = {
     } = extractTransferStateFromString(transferStateString);
 
     if (!transferState.scullyImageUrlMap) {
-      // console.log(
-      //   "bailing out of scully image since we have no scully image specific transferstate"
-      // );
       // If transferState is empty we quit out.
       doc.body.appendChild(transferStateElement);
       return html;
@@ -237,8 +234,9 @@ module.exports = {
               reject(lastError);
             }
           });
-          scullyImageUrlMap[scullyPreloaderImageMapKey] = promise;
-          return await promise;
+          scullyImageUrlMap[scullyPreloaderImageMapKey] = await promise;
+
+          return scullyImageUrlMap[scullyPreloaderImageMapKey];
         } else {
           // console.log("Image already parsed");
           const imageData = await scullyImageUrlMap[scullyPreloaderImageMapKey];

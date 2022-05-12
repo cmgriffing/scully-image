@@ -334,8 +334,10 @@ export class ScullyImageComponent {
   template,
   styles: [componentStyles],
 })
-export class ScullyBlurImageComponent extends ScullyImageComponent
-  implements OnInit, OnChanges, OnDestroy {
+export class ScullyBlurImageComponent
+  extends ScullyImageComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input()
   preloader = PreloaderTypes.blur;
 
@@ -373,8 +375,10 @@ export class ScullyBlurImageComponent extends ScullyImageComponent
   template,
   styles: [componentStyles],
 })
-export class ScullyTracedImageComponent extends ScullyImageComponent
-  implements OnInit, OnChanges, OnDestroy {
+export class ScullyTracedImageComponent
+  extends ScullyImageComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input()
   preloader = PreloaderTypes.tracedSVG;
 
@@ -412,8 +416,10 @@ export class ScullyTracedImageComponent extends ScullyImageComponent
   template,
   styles: [componentStyles],
 })
-export class ScullyPrimitivesImageComponent extends ScullyImageComponent
-  implements OnInit, OnChanges, OnDestroy {
+export class ScullyPrimitivesImageComponent
+  extends ScullyImageComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input()
   preloader = PreloaderTypes.primitives;
 
@@ -451,8 +457,10 @@ export class ScullyPrimitivesImageComponent extends ScullyImageComponent
   template,
   styles: [componentStyles],
 })
-export class ScullyPixelsImageComponent extends ScullyImageComponent
-  implements OnInit, OnChanges, OnDestroy {
+export class ScullyPixelsImageComponent
+  extends ScullyImageComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input()
   preloader = PreloaderTypes.pixels;
 

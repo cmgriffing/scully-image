@@ -1,9 +1,14 @@
 const { scullyImageSharpPlugin } = require("./scully-image");
 
 module.exports = {
-  registerScullyImage: registerPlugin => {
+  registerScullyImage: (registerPlugin) => {
     const validator = async () => [];
 
-    registerPlugin("render", "scullyImage", scullyImageSharpPlugin, validator);
-  }
+    registerPlugin(
+      "postProcessByHtml",
+      "scullyImage",
+      scullyImageSharpPlugin,
+      validator
+    );
+  },
 };
