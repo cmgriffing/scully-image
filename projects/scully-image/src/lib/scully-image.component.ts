@@ -30,14 +30,13 @@ export interface blurOptions {
   width: number;
 }
 
-export enum PrimitivesShapes {
-  triangle = 'triangle',
-  ellipse = 'ellipse',
-  rotatedEellipse = 'rotated-ellipse',
-  rectangle = 'rectangle',
-  rotatedRectangle = 'rotatedRectangle',
-  random = 'random',
-}
+export type PrimitivesShapes =
+  | 'triangle'
+  | 'ellipse'
+  | 'rotated-ellipse'
+  | 'rectangle'
+  | 'rotatedRectangle'
+  | 'random';
 
 export interface primitivesOptions {
   numSteps?: number; // 1 - 1000, default 200
@@ -62,14 +61,13 @@ export interface tracedOptions {
   background?: string;
 }
 
-export enum tracedTurnPolicies {
-  TURNPOLICY_BLACK = 'black',
-  TURNPOLICY_WHITE = 'white',
-  TURNPOLICY_LEFT = 'left',
-  TURNPOLICY_RIGHT = 'right',
-  TURNPOLICY_MINORITY = 'minority',
-  TURNPOLICY_MAJORITY = 'majority',
-}
+export type tracedTurnPolicies =
+  | 'black'
+  | 'white'
+  | 'left'
+  | 'right'
+  | 'minority'
+  | 'majority';
 
 export interface pixelsOptions {
   width?: number;
