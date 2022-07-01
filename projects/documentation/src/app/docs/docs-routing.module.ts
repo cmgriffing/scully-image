@@ -1,7 +1,7 @@
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 
-import {DocsComponent} from './docs.component';
+import { DocsComponent } from './docs.component';
 
 const routes: Routes = [
   {
@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: '**',
     component: DocsComponent,
-  }
+  },
 ];
 
 @NgModule({
@@ -19,4 +19,3 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class DocsRoutingModule {}
-

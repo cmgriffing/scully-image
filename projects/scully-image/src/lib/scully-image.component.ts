@@ -18,7 +18,7 @@ import { interval, combineLatest, of, Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 
 export enum PreloaderTypes {
-  blur = 'base64',
+  blur = 'blur',
   tracedSVG = 'tracedSVG',
   primitives = 'primitives',
   pixels = 'pixels',
