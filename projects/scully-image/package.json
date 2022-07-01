@@ -2,7 +2,7 @@
   "name": "scully-image",
   "version": "0.6.0",
   "dependencies": {
-    "sharp": "^0.25.2",
+    "sharp": "^0.30.5",
     "potrace": "2.1.5",
     "imagemin": "^7.0.1",
     "imagemin-pngquant": "^8.0.0",
@@ -16,7 +16,7 @@
     "@svgdotjs/svg.js": "^3.0.16"
   },
   "devDependencies": {
-    "sharp": "^0.25.2",
+    "sharp": "^0.30.5",
     "potrace": "2.1.5",
     "imagemin": "^7.0.1",
     "imagemin-pngquant": "^8.0.0",
