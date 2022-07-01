@@ -344,13 +344,13 @@ filter: blur(20px);
           }
         })
       );
+
+      const serializedDom = dom.serialize();
+
+      return serializedDom;
     } catch (e) {
       console.log("Failed to process all images", e);
     }
-
-    const serializedDom = dom.serialize();
-
-    return serializedDom;
   },
 };
 
