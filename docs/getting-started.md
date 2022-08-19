@@ -13,7 +13,7 @@ Using scully-image was designed to be as easy as possible. The goal is to let yo
 
 You will need an existing Angular+Scully site set up.
 
-If not, head on over to the Scully documentation to get started: [https://scully.io/docs/getting-started](https://scully.io/docs/getting-started)
+If not, head on over to the Scully documentation to get started: [https://scully.io/docs/learn/getting-started/overview](https://scully.io/docs/learn/getting-started/overview)
 
 ## Installation
 
